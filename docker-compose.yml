@@ -1,0 +1,50 @@
+services:
+
+  flask:
+    build: .
+    container_name: image-resizer-app
+
+    env_file:
+      - .env
+
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: image-resizer-postgres
+
+    environment:
+      POSTGRES_DB: image_resizer_db
+      POSTGRES_USER: image_resizer_user
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U image_resizer_user -d image_resizer_db"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    restart: unless-stopped
+
+
+volumes:
+  postgres_data:
