@@ -52,5 +52,22 @@ pipeline {
                 }
             }
         }
+        
+        stage('Deploy with Ansible') {
+            steps {
+                sshagent(['aws-ec2-ssh']) {
+                    sh '''
+                        cd terraform-project
+
+                        EC2_IP=$(terraform output -raw public_ip)
+
+                        ansible-playbook \
+                        -i "$EC2_IP," \
+                        -u ubuntu \
+                        ../ansible/playbook.yml
+                    '''
+                }
+            }
+        }
     }
 }

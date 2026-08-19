@@ -1,0 +1,55 @@
+---
+- name: Configure and Deploy image Resizer Application 
+  hosts: all
+  become: yes 
+
+  vars:
+    app_dir: /opt/image-resizer
+    docker_image: "nitinsain012/image-resizer-app"
+  
+  tasks:
+    - name: Update apt package cache 
+      ansible.builtin.apt:
+        update_cache: yes
+      
+    - name: Install Docker and requirement packages
+      ansible.builtin.apt:
+        name: 
+          - docker.io
+          - docker-compose-v2
+        state: present
+
+    - name: start and enabled docker 
+      ansible.builtin.systemd:
+        name: docker
+        enabled: yes
+        state: started 
+
+    - name: Add ubuntu user to docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
+     
+    - name: Create application directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory 
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+
+    - name: Pull your Docker image
+      community.docker.docker_image_pull:
+        name: "{{ docker_image }}"
+        source: pull
+
+    - name: Copy docker-compose.yml
+      ansible.builtin.copy:
+        src: ../docker-compose.yml
+        dest: /opt/image-resizer/docker-compose.yml
+
+    - name: Start the application
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        state: present
