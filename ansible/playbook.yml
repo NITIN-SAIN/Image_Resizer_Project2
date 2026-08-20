@@ -42,7 +42,7 @@
     - name: Pull your Docker image
       community.docker.docker_image_pull:
         name: "{{ docker_image }}"
-        tag: latest
+        tag: "{{ docker_tag }}"
 
     - name: Copy docker-compose.yml
       ansible.builtin.copy:
