@@ -64,7 +64,8 @@ pipeline {
                         ansible-playbook \
                         -i "$EC2_IP," \
                         -u ubuntu \
-                        ../ansible/playbook.yml
+                        ../ansible/playbook.yml \
+			-e "docker_tag=${IMAGE_TAG}"
                     '''
                 }
             }
