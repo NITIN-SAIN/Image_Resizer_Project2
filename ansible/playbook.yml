@@ -38,7 +38,14 @@
         owner: ubuntu
         group: ubuntu
         mode: "0755"
-
+    - name: Create application .env file
+      ansible.builtin.copy:
+        content: "{{ app_env }}"
+        dest: "{{ app_dir }}/.env"
+        owner: ubuntu
+        group: ubuntu
+        mode: "0600"
+      no_log: true
     - name: Pull your Docker image
       community.docker.docker_image_pull:
         name: "{{ docker_image }}"

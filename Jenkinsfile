@@ -52,23 +52,30 @@ pipeline {
                 }
             }
         }
-        
         stage('Deploy with Ansible') {
-            steps {
-                sshagent(['aws-ec2-ssh']) {
-                    sh '''
-                        cd terraform-project
+    		steps {
+        		withCredentials([
+            			string(
+                			credentialsId: 'image-resizer-env',
+                			variable: 'APP_ENV'
+            			)
+        		]) {
+            			sshagent(['aws-ec2-ssh']) {
+                			sh '''
+                    				cd terraform-project
 
-                        EC2_IP=$(terraform output -raw public_ip)
+                    				EC2_IP=$(terraform output -raw public_ip)
 
-                        ansible-playbook \
-                        -i "$EC2_IP," \
-                        -u ubuntu \
-                        ../ansible/playbook.yml \
-			-e "docker_tag=${IMAGE_TAG}"
-                    '''
-                }
-            }
-        }
+                    				ansible-playbook \
+                    				-i "$EC2_IP," \
+                    				-u ubuntu \
+                    				../ansible/playbook.yml \
+                    				-e "docker_tag=${IMAGE_TAG}" \
+                    				-e "app_env=${APP_ENV}"
+                			'''
+            			}
+        		}
+    		}
+	}        
     }
 }
