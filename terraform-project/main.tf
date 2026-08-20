@@ -1,6 +1,7 @@
 resource "aws_instance" "myweb" {
 	ami=var.ami_id
 	instance_type=var.instance_type
+	key_name = "my_first_key"
 	
 	vpc_security_group_ids=  [aws_security_group.image_sg.id]
 	iam_instance_profile = aws_iam_instance_profile.image_resizer_profile.name
