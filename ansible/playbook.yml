@@ -52,9 +52,12 @@
         tag: "{{ docker_tag }}"
 
     - name: Copy docker-compose.yml
-      ansible.builtin.copy:
-        src: ../docker-compose.yml
-        dest: /opt/image-resizer/docker-compose.yml
+      ansible.builtin.template:
+        src: ../docker-compose.yml.j2
+        dest: "{{ app_dir }}/docker-compose.yml"
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
 
     - name: Start the application
       community.docker.docker_compose_v2:
