@@ -40,7 +40,7 @@
         mode: "0755"
     - name: Create application .env file
       ansible.builtin.copy:
-        content: "{{ app_env }}"
+        content: "{{ app_env }}" 
         dest: "{{ app_dir }}/.env"
         owner: ubuntu
         group: ubuntu

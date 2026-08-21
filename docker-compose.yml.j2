@@ -24,10 +24,13 @@ services:
     image: postgres:16
     container_name: image-resizer-postgres
 
+    env_file:
+      - .env
+
     environment:
       POSTGRES_DB: image_resizer_db
       POSTGRES_USER: image_resizer_user
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD} 
 
     volumes:
       - postgres_data:/var/lib/postgresql/data

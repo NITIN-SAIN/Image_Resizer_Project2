@@ -55,9 +55,9 @@ pipeline {
         stage('Deploy with Ansible') {
     		steps {
         		withCredentials([
-            			string(
+            			file( 
                 			credentialsId: 'image-resizer-env',
-                			variable: 'APP_ENV'
+                			variable: 'APP_ENV_FILE'  
             			)
         		]) {
             			sshagent(['aws-ec2-ssh']) {
@@ -71,7 +71,7 @@ pipeline {
                     				-u ubuntu \
                     				../ansible/playbook.yml \
                     				-e "docker_tag=${IMAGE_TAG}" \
-                    				-e "app_env=${APP_ENV}"
+                    				-e "app_env=$(cat "$APP_ENV_FILE")"
                 			'''
             			}
         		}
